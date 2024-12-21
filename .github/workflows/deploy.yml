@@ -24,12 +24,16 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+# Fetch the server's SSH key and add it to known_hosts (ensure key is trusted)
+ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
 
+# Verify the SSH connection (optional)
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts ubuntu@$SERVER_IP "echo 'SSH connection established'"
           # Verify the SSH connection (optional)
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$SERVER_IP "echo 'SSH connection established'"
+          #ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$SERVER_IP "echo 'SSH connection established'"
 
           # Sync the WordPress files to the server
-          sudo rsync -avz --no-perms --no-times  --exclude '.git/' ./ ubuntu@$SERVER_IP:/var/www/html/
+          #sudo rsync -avz --no-perms --no-times  --exclude '.git/' ./ ubuntu@$SERVER_IP:/var/www/html/
 
       # Step 3: Set proper permissions on the server (optional)
       - name: Set Permissions
