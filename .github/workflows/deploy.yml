@@ -26,7 +26,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
           # Verify the SSH connection (optional)
-          ssh -o StrictHostKeyChecking=no ubuntu@$SERVER_IP "echo 'SSH connection established'"
+          ssh -o StrictHostKeyChecking=no UserKnownHostsFile=/dev/null ubuntu@$SERVER_IP "echo 'SSH connection established'"
 
           # Sync the WordPress files to the server
           sudo rsync -avz  --exclude '.git/' ./ ubuntu@$SERVER_IP:/var/www/html/
