@@ -29,7 +29,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ubuntu@$SERVER_IP "echo 'SSH connection established'"
 
           # Sync the WordPress files to the server
-          rsync -avz --no-perms --no-times --exclude '.git/' ./ ubuntu@$SERVER_IP:/var/www/html/
+          sudo rsync -avz --no-perms --no-times --exclude '.git/' ./ ubuntu@$SERVER_IP:/var/www/html/
 
       # Step 3: Set proper permissions on the server (optional)
       - name: Set Permissions
