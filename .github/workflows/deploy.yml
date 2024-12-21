@@ -8,16 +8,36 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # Step 2: Sync files to the server
       - name: Sync Files to Server
         env:
           SERVER_IP: ${{ secrets.SERVER_IP }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
+          # Set up the SSH private key for secure connection
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+
+          # Verify the SSH connection (optional)
+          ssh -o StrictHostKeyChecking=no ubuntu@$SERVER_IP "echo 'SSH connection established'"
+
+          # Sync the WordPress files to the server
           rsync -avz --exclude '.git/' ./ ubuntu@$SERVER_IP:/var/www/html/
+
+      # Step 3: Set proper permissions on the server (optional)
+      - name: Set Permissions
+        env:
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@$SERVER_IP << 'EOF'
+          sudo chown -R www-data:www-data /var/www/html/
+          sudo chmod -R 755 /var/www/html/
+          EOF
